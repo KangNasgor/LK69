@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Form from "next/form";
+import MoviePagination from "./search/search";
 
 export default function Home() {
   interface Movie {
@@ -24,27 +25,43 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState("upcoming");
+  const [loading, setLoading] = useState(false);
 
   const searchMovie = async () => {
+    setMovies([]);
+    setError("");
+    const fetchedMovies = [];
     let page = 1;
-    while(true){
-      const response = await fetch(`https://www.omdbapi.com/?s=${search}&page=${page}&apikey=56419db&`);
-      const data = await response.json();
+    setLoading(true);
 
-      if (data.Error === "Too many results.") {
-        setError("Too many results.");
+    while (true) {
+      try {
+        const response = await fetch(`https://www.omdbapi.com/?s=${search}&page=${page}&apikey=56419db&`);
+        const data = await response.json();
+
+        if (data.Error === "Too many results.") {
+          setError("Too many results.");
+          break;
+        }
+        else if(data.Result === "Movie not found!") {
+          setError("Movie not found.");
+          break;  
+        }
+        fetchedMovies.push(...data.Search);
+        if (data.Search.length < 10){
+          break;
+        }
+        page++
+      }
+      catch(error){
+        setError("Error while fetching movies.")
         break;
       }
-      else if(data.Result === "Movie not found!") {
-        setError("Movie not found.");
-        break;
+      finally{
+        setLoading(false);
       }
-      movies.push(...data.Search);
-      if (data.Search.length < 10){
-        break;
-      }
-      page++
     }
+    setMovies(fetchedMovies);
     setResult("search");
   }
 
@@ -81,36 +98,13 @@ export default function Home() {
           <button className="w-6/12 bg-blue-500 p-4 rounded-md text-black mx-auto">Search</button>
         </Form>
       </div>
-      <div style={{
-        display: result === "search" ? "block" : "none"
-      }}>
+      <div style={{ display: result === "search" ? "block" : "none" }}>
         <h1 className="text-black font-medium text-xl mb-5">Search Result :</h1>
         <div className="flex gap-5 flex-col pb-36">
-          {
-            error ? (<p className="text-black">{error}</p>)
-            : 
-            movies && movies.length > 0 ? (
-              movies.map((movie: Movie) => (
-                <div key={movie.imdbID} className="w-10/12 mx-auto">
-                  <div className="text-black flex gap-2 items-start">
-                    {
-                      movie.Poster === "N/A" ? <p>No poster available.</p> : <Image src={movie.Poster} width={120} height={120} alt="poster" className="object-cover" />
-                    }
-                    <div className="w-full">
-                      <h1 className="w-full truncate">{movie.Title}</h1>
-                      <p className="w-fit">Released in {movie.Year}</p>
-                    </div>
-                  </div>
-                  <div className="h-px w-9/12 bg-black mt-5 opacity-50"></div>
-                </div>
-              ))
-            ) : (<p className="text-black">{error}</p>)
-          }
+          <MoviePagination movies={movies}/>
         </div>
       </div>
-      <div style={{
-        display: result === "upcoming" ? "block" : "none"
-      }} className="pb-36">
+      <div style={{ display: result === "upcoming" ? "block" : "none" }} className="pb-36">
         <h1 className="text-black font-medium text-xl mb-5">Upcoming movies :</h1>
         <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-5">
           { 

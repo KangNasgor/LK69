@@ -21,19 +21,23 @@ export default function Home() {
 
   };
   const [latestMovie, setLatestMovie] = useState<UpcomingMovies[]>([]);
+  const [latestActionMovie, setLatestActionMovie] = useState<UpcomingMovies[]>([]);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
+
   const [result, setResult] = useState("upcoming");
   const [loading, setLoading] = useState(false);
+
+
+
 
   const searchMovie = async () => {
     setMovies([]);
     setError("");
-    const fetchedMovies = [];
-    let page = 1;
     setLoading(true);
-
+    let page = 1;
+    const fetchedMovies = [];
     while (true) {
       try {
         const response = await fetch(`https://www.omdbapi.com/?s=${search}&page=${page}&apikey=56419db&`);
@@ -62,6 +66,7 @@ export default function Home() {
       }
     }
     setMovies(fetchedMovies);
+    setLoading(false);
     setResult("search");
   }
 
@@ -85,10 +90,34 @@ export default function Home() {
         setResult("upcoming");
       }
       catch (error) {
-        console.error(error);
+        setError("Error while fetching movies.");
+      }
+    }
+    const latestActionMovies = async () => {
+      try {
+        const response = await fetch('https://moviesdatabase.p.rapidapi.com/titles/x/upcoming?genre=Action&page=1', {
+          headers: {
+            'x-rapidapi-host': 'moviesdatabase.p.rapidapi.com',
+            'x-rapidapi-key': '72e1b9285cmsh7ffda093016cda1p1ed879jsn518e5f7b04a5'
+          }
+        });
+        const data = await response.json();
+        const extractedMovies = data.results.map((movie: any) => ({
+          id: movie.id,
+          title: movie.titleText.text,
+          year: movie.releaseYear.year,
+          poster: movie.primaryImage.url,
+        }));
+        setLatestActionMovie(extractedMovies);
+        setResult("upcoming");
+      }
+      catch (error) {
+        setError("Error while fetching movies.");
       }
     }
     latestMovies();
+    latestActionMovies();
+
   }, []);
   return (
     <div className="h-fit">
@@ -101,16 +130,13 @@ export default function Home() {
       <div style={{ display: result === "search" ? "block" : "none" }}>
         <h1 className="text-black font-medium text-xl mb-5">Search Result :</h1>
         <div className="flex gap-5 flex-col pb-36">
-          <MoviePagination movies={movies}/>
+          {loading ? <p className="text-black font-medium">Loading...</p> : <MoviePagination movies={movies}/>}
         </div>
       </div>
       <div style={{ display: result === "upcoming" ? "block" : "none" }} className="pb-36">
         <h1 className="text-black font-medium text-xl mb-5">Upcoming movies :</h1>
-        <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-5">
+        <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-5 mb-10">
           { 
-            error ?
-            <p className="text-black">{error}</p>
-            :
             latestMovie && latestMovie.length > 0 ?
               latestMovie.map((movie: UpcomingMovies) => (
                 <div key={movie.id} className="min-w-56 flex flex-col">
@@ -124,6 +150,22 @@ export default function Home() {
               ))
               :
               <p className="text-black">{error}</p>
+          }
+        </div>
+        <h1 className="text-black font-medium text-xl mb-5">Upcoming Action movies :</h1>
+        <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-5">
+          {
+            latestActionMovie && latestActionMovie.length > 0 ?
+              latestActionMovie.map((movie : UpcomingMovies) => (
+                <div key={movie.id} className="min-w-56 flex flex-col">
+                  {movie.poster ? <Image src={movie.poster} width={500} height={500} alt="img"/> : <p>Poster isn't available</p>}
+                  <div className="w-full">
+                    <h1 className="text-black w-full truncate">{movie.title}</h1>
+                  </div>
+                </div>
+              ))
+            :
+            <p className="text-black font-medium">{error}</p>
           }
         </div>
       </div>

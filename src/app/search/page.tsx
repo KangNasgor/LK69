@@ -46,11 +46,9 @@ export default function MovieSearch() {
           }
           fetchedMovies.push(...data.Search); // Inserting all movies data
           if (data.Search.length < 10) { // If movies data is below 10, then stop the search
-            console.log("last page");
             break;
           }
           if(fetchedMovies.length === 100){
-            console.log(data.Search.length)
             break;
           }
           page++
@@ -78,8 +76,17 @@ export default function MovieSearch() {
 
   // Handle page change
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) { // if it is more/equal to 1 and is below/equal with totalPages
+    if(page === totalPages + 1){
+      setCurrentPage(1);
+      console.log(currentPage);
+    }
+    else if(page === 0){
+      setCurrentPage(totalPages);
+      console.log(currentPage);
+    }
+    else{ // if it is more/equal to 1 and is below/equal with totalPages
       setCurrentPage(page);
+      console.log(currentPage);
     }
   };
 
@@ -112,11 +119,11 @@ export default function MovieSearch() {
           ) : (<p className="text-black">{error}</p>)
       }
       <div className="pagination-controls text-black flex gap-5 w-10/12 mx-auto">
-        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+        <button onClick={() => handlePageChange(currentPage - 1)}>
           Prev
         </button>
         <span>Page {currentPage} of {totalPages}</span>
-        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+        <button onClick={() => handlePageChange(currentPage + 1)}>
           Next
         </button>
       </div>

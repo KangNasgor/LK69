@@ -107,7 +107,7 @@ export default function MovieSearch() {
               <div key={movie.imdbID} className="w-10/12 mx-auto">
                 <div className="text-black flex gap-2 items-start">
                   {
-                    movie.Poster === "N/A" ? <p>No poster available.</p> : <Image src={movie.Poster} width={120} height={120} alt="poster" className="object-cover" />
+                    movie.Poster === "N/A" ? <p>No poster available.</p> : <Image src={movie.Poster} width={120} height={120} alt="poster" className="object-cover cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}/>
                   }
                   <div className="w-full">
                     <h1 className="w-full cursor-pointer hover:underline hover:decoration-solid" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}>

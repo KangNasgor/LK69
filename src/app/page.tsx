@@ -139,7 +139,7 @@ export default function Home() {
               latestMovie.map((movie: UpcomingMovies) => (
                 <div key={movie.id} className="min-w-32 flex flex-col">
                   <div className="">
-                    {movie.poster ? (<Image src={movie.poster} width={500} height={500} alt="img" className="object-cover w-36 h-40" />) : (<p>No poster available</p>)}
+                    {movie.poster ? (<Image src={movie.poster} width={500} height={500} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }} />) : (<p>No poster available</p>)}
                   </div>
                   <div className="w-full">
                     <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
@@ -157,7 +157,7 @@ export default function Home() {
             latestActionMovie && latestActionMovie.length > 0 && loading === false ?
               latestActionMovie.map((movie : UpcomingMovies) => (
                 <div key={movie.id} className="min-w-32 flex flex-col">
-                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
+                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/> : <p>Poster isn't available</p>}
                   <div className="w-full">
                     <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
                   </div>
@@ -173,7 +173,7 @@ export default function Home() {
             latestDramaMovie && latestDramaMovie.length > 0 && loading === false ?
               latestDramaMovie.map((movie : UpcomingMovies) => (
                 <div key={movie.id} className="min-w-32 flex flex-col">
-                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
+                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/> : <p>Poster isn't available</p>}
                   <div className="w-full">
                     <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
                   </div>
@@ -189,7 +189,7 @@ export default function Home() {
             latestHorrorMovie && latestHorrorMovie.length > 0 && loading === false ?
               latestHorrorMovie.map((movie : UpcomingMovies) => (
                 <div key={movie.id} className="min-w-32 flex flex-col">
-                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
+                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/> : <p>Poster isn't available</p>}
                   <div className="w-full">
                     <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
                   </div>

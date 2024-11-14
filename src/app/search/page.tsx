@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Router, { useRouter, useSearchParams } from 'next/navigation';
 
 interface Movie {
   imdbID: string;
@@ -10,7 +11,53 @@ interface Movie {
   Plot: string;
 }
 
-export default function MoviePagination({ movies }: { movies: Movie[] }, error: String) {
+export default function MovieSearch() {
+  const [error, setError] = useState("");
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const params = useSearchParams();
+  const query = params.get("query");
+
+  const searchMovie = () => {
+    router.push(`/search?query=${encodeURIComponent(search)}`); 
+  }
+
+  useEffect( () => {
+    const searchMovie = async () => {
+      setMovies([]);
+      setError("");
+      let page = 1;
+      const fetchedMovies = [];
+      while (true) {
+        try {
+          const response = await fetch(`https://www.omdbapi.com/?s=${query}&page=${page}&apikey=56419db&`); // fetch movies data
+          const data = await response.json(); // assign movies data
+
+          if (data.Error === "Too many results.") { // If too many results fetched
+            setError("Too many results.");
+            break;
+          }
+          else if (data.Result === "Movie not found!") { // If movie's not found
+            setError("Movie not found.");
+            break;
+          }
+          fetchedMovies.push(...data.Search); // Inserting all movies data
+          if (data.Search.length < 10) { // If movies data is below 10, then stop the search
+            break;
+          }
+          page++
+        }
+        catch (error) {
+          setError("Error while fetching movies.")
+          break;
+        }
+      }
+      setMovies(fetchedMovies);
+    }
+    searchMovie();
+  }, [search]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -31,6 +78,12 @@ export default function MoviePagination({ movies }: { movies: Movie[] }, error: 
 
   return (
     <div>
+        <div className="w-full bg-yellow-300 flex flex-col justify-center items-center py-10 mb-10 h-24 mx-auto">
+          <div className="flex gap-4 w-3/12">
+            <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 rounded-md" placeholder="Search for movies"/>
+            <button className="w-6/12 bg-blue-500 p-4 rounded-md text-black mx-auto" onClick={searchMovie}>Search</button>
+          </div>
+        </div>
       {
         error ? (<p className="text-black">{error}</p>)
           :

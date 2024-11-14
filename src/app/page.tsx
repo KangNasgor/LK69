@@ -2,17 +2,9 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Form from "next/form";
-import MoviePagination from "./search/search";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  interface Movie {
-    Title: string,
-    Year: string,
-    imdbID: string,
-    Poster: string,
-    Plot: string,
-  };
-
   interface UpcomingMovies {
     title: string,
     year: string,
@@ -20,54 +12,19 @@ export default function Home() {
     poster: string,
 
   };
+
   const [latestMovie, setLatestMovie] = useState<UpcomingMovies[]>([]);
   const [latestActionMovie, setLatestActionMovie] = useState<UpcomingMovies[]>([]);
-  const [movies, setMovies] = useState<Movie[]>([]);
+
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
 
   const [result, setResult] = useState("upcoming");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-
-
-
-  const searchMovie = async () => {
-    setMovies([]);
-    setError("");
-    setLoading(true);
-    let page = 1;
-    const fetchedMovies = [];
-    while (true) {
-      try {
-        const response = await fetch(`https://www.omdbapi.com/?s=${search}&page=${page}&apikey=56419db&`);
-        const data = await response.json();
-
-        if (data.Error === "Too many results.") {
-          setError("Too many results.");
-          break;
-        }
-        else if(data.Result === "Movie not found!") {
-          setError("Movie not found.");
-          break;  
-        }
-        fetchedMovies.push(...data.Search);
-        if (data.Search.length < 10){
-          break;
-        }
-        page++
-      }
-      catch(error){
-        setError("Error while fetching movies.")
-        break;
-      }
-      finally{
-        setLoading(false);
-      }
-    }
-    setMovies(fetchedMovies);
-    setLoading(false);
-    setResult("search");
+  const searchMovie = () => {
+    router.push(`/search?query=${encodeURIComponent(search)}`); 
   }
 
   useEffect(() => {
@@ -122,20 +79,14 @@ export default function Home() {
   return (
     <div className="h-fit">
       <div className="w-full bg-yellow-300 flex flex-col justify-center items-center py-10 h-24 mx-auto">
-        <Form action={searchMovie} className="flex gap-4 w-3/12">
+        <div className="flex gap-4 w-3/12">
           <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 rounded-md" placeholder="Search for movies"/>
-          <button className="w-6/12 bg-blue-500 p-4 rounded-md text-black mx-auto">Search</button>
-        </Form>
-      </div>
-      <div style={{ display: result === "search" ? "block" : "none" }}>
-        <h1 className="text-black font-medium text-xl mb-5">Search Result :</h1>
-        <div className="flex gap-5 flex-col pb-36">
-          {loading ? <p className="text-black font-medium">Loading...</p> : <MoviePagination movies={movies}/>}
+          <button className="w-6/12 bg-blue-500 p-4 rounded-md text-black mx-auto" onClick={searchMovie}>Search</button>
         </div>
       </div>
       <div style={{ display: result === "upcoming" ? "block" : "none" }} className="pb-36">
-        <h1 className="text-black font-medium text-xl mb-5">Upcoming movies :</h1>
-        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5 mb-10">
+        <h1 className="text-black font-medium text-xl mb-5 mt-10">Upcoming movies :</h1>
+        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5">
           { 
             latestMovie && latestMovie.length > 0 ?
               latestMovie.map((movie: UpcomingMovies) => (
@@ -152,7 +103,7 @@ export default function Home() {
               <p className="text-black">{error}</p>
           }
         </div>
-        <h1 className="text-black font-medium text-xl mb-5">Upcoming Action movies :</h1>
+        <h1 className="text-black font-medium text-xl mb-5 mt-10">Upcoming Action movies :</h1>
         <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5">
           {
             latestActionMovie && latestActionMovie.length > 0 ?

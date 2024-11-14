@@ -17,11 +17,13 @@ export default function MovieDetail(){
 
     const [movie, setMovie] = useState<Movie[]>([]);
 
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchMovieDetail = async () =>{
             try{
+                setLoading(true);
                 const response = await fetch(`https://www.omdbapi.com/?i=${query}&plot=full&apikey=56419db&`);
                 const data = await response.json();
                 if(data.Response === "Too many results."){
@@ -36,6 +38,9 @@ export default function MovieDetail(){
             }
             catch (error){
                 setError("Error while fetching data.");
+            }
+            finally{
+                setLoading(true);
             }
         }
         fetchMovieDetail();
@@ -56,6 +61,11 @@ export default function MovieDetail(){
                         </div>
                     </div>
                 ))
+                :
+                loading ? 
+                <div className='w-10/12 mx-auto'>
+                    <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1>
+                </div>
                 :
                 <p>{error}</p>
             }

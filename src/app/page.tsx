@@ -142,7 +142,7 @@ export default function Home() {
                     {movie.poster ? (<Image src={movie.poster} width={500} height={500} alt="img" className="object-cover w-36 h-40" />) : (<p>No poster available</p>)}
                   </div>
                   <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center">{movie.title}</h1>
+                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
                   </div>
                 </div>
               ))
@@ -159,7 +159,7 @@ export default function Home() {
                 <div key={movie.id} className="min-w-32 flex flex-col">
                   {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
                   <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center">{movie.title}</h1>
+                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
                   </div>
                 </div>
               ))
@@ -175,7 +175,7 @@ export default function Home() {
                 <div key={movie.id} className="min-w-32 flex flex-col">
                   {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
                   <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center">{movie.title}</h1>
+                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
                   </div>
                 </div>
               ))
@@ -191,7 +191,7 @@ export default function Home() {
                 <div key={movie.id} className="min-w-32 flex flex-col">
                   {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
                   <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center">{movie.title}</h1>
+                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
                   </div>
                 </div>
               ))

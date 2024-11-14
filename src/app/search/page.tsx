@@ -25,9 +25,7 @@ export default function MovieSearch() {
 
   const handleSearchMovie = () => {
     router.push(`/search?query=${encodeURIComponent(search)}`);
-    console.log(query);
   }
-
   useEffect(() => {
     const searchMovie = async () => {
       setMovies([]);
@@ -112,7 +110,9 @@ export default function MovieSearch() {
                     movie.Poster === "N/A" ? <p>No poster available.</p> : <Image src={movie.Poster} width={120} height={120} alt="poster" className="object-cover" />
                   }
                   <div className="w-full">
-                    <h1 className="w-full truncate">{movie.Title}</h1>
+                    <h1 className="w-full cursor-pointer hover:underline hover:decoration-solid" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}>
+                      {movie.Title}
+                    </h1>
                     <p className="w-fit">Released in {movie.Year}</p>
                   </div>
                 </div>

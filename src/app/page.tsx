@@ -30,6 +30,7 @@ export default function Home() {
   useEffect(() => {
     const latestMovies = async () => {
       try {
+        setLoading(true);
         const response = await fetch('https://moviesdatabase.p.rapidapi.com/titles/x/upcoming', {
           headers: {
             'x-rapidapi-host': 'moviesdatabase.p.rapidapi.com',
@@ -48,6 +49,9 @@ export default function Home() {
       }
       catch (error) {
         setError("Error while fetching movies.");
+      }
+      finally{
+        setLoading(false);
       }
     }
     const latestActionMovies = async () => {
@@ -85,10 +89,10 @@ export default function Home() {
         </div>
       </div>
       <div style={{ display: result === "upcoming" ? "block" : "none" }} className="pb-36">
-        <h1 className="text-black font-medium text-xl mb-5 mt-10">Upcoming movies :</h1>
-        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5">
+        <h1 className="text-black font-medium text-xl ml-3 mt-10">Upcoming movies :</h1>
+        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5 bg-yellow-300 py-5">
           { 
-            latestMovie && latestMovie.length > 0 ?
+            latestMovie && latestMovie.length > 0 && loading === false ?
               latestMovie.map((movie: UpcomingMovies) => (
                 <div key={movie.id} className="min-w-32 flex flex-col">
                   <div className="">
@@ -100,13 +104,14 @@ export default function Home() {
                 </div>
               ))
               :
+              loading ? <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1> :
               <p className="text-black">{error}</p>
           }
         </div>
-        <h1 className="text-black font-medium text-xl mb-5 mt-10">Upcoming Action movies :</h1>
-        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5">
+        <h1 className="text-black font-medium text-xl ml-3 mt-10">Upcoming Action movies :</h1>
+        <div className="flex gap-5 overflow-x-auto whitespace-nowrap bg-yellow-300 py-5 px-5">
           {
-            latestActionMovie && latestActionMovie.length > 0 ?
+            latestActionMovie && latestActionMovie.length > 0 && loading === false ?
               latestActionMovie.map((movie : UpcomingMovies) => (
                 <div key={movie.id} className="min-w-32 flex flex-col">
                   {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
@@ -115,7 +120,7 @@ export default function Home() {
                   </div>
                 </div>
               ))
-            :
+            : loading ? <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1> :
             <p className="text-black font-medium">{error}</p>
           }
         </div>

@@ -95,7 +95,7 @@ export default function Home() {
     }
     const latestActionMovies = async () => {
       try {
-        const response = await fetch('https://moviesdatabase.p.rapidapi.com/titles/x/upcoming?genre=Action&page=1', {
+        const response = await fetch('https://moviesdatabase.p.rapidapi.com/titles/x/upcoming?genre=Action&page=2', {
           headers: {
             'x-rapidapi-host': 'moviesdatabase.p.rapidapi.com',
             'x-rapidapi-key': '72e1b9285cmsh7ffda093016cda1p1ed879jsn518e5f7b04a5'
@@ -135,16 +135,16 @@ export default function Home() {
       </div>
       <div style={{ display: result === "upcoming" ? "block" : "none" }} className="pb-36">
         <h1 className="text-black font-medium text-xl mb-5">Upcoming movies :</h1>
-        <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-5 mb-10">
+        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5 mb-10">
           { 
             latestMovie && latestMovie.length > 0 ?
               latestMovie.map((movie: UpcomingMovies) => (
-                <div key={movie.id} className="min-w-56 flex flex-col">
+                <div key={movie.id} className="min-w-32 flex flex-col">
                   <div className="">
-                    {movie.poster ? (<Image src={movie.poster} width={500} height={500} alt="img" className="object-cover" />) : (<p>No poster available</p>)}
+                    {movie.poster ? (<Image src={movie.poster} width={500} height={500} alt="img" className="object-cover w-36 h-40" />) : (<p>No poster available</p>)}
                   </div>
                   <div className="w-full">
-                    <h1 className="text-black w-full truncate">{movie.title}</h1>
+                    <h1 className="text-black w-full truncate text-center">{movie.title}</h1>
                   </div>
                 </div>
               ))
@@ -153,14 +153,14 @@ export default function Home() {
           }
         </div>
         <h1 className="text-black font-medium text-xl mb-5">Upcoming Action movies :</h1>
-        <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-5">
+        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5">
           {
             latestActionMovie && latestActionMovie.length > 0 ?
               latestActionMovie.map((movie : UpcomingMovies) => (
-                <div key={movie.id} className="min-w-56 flex flex-col">
-                  {movie.poster ? <Image src={movie.poster} width={500} height={500} alt="img"/> : <p>Poster isn't available</p>}
+                <div key={movie.id} className="min-w-32 flex flex-col">
+                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40"/> : <p>Poster isn't available</p>}
                   <div className="w-full">
-                    <h1 className="text-black w-full truncate">{movie.title}</h1>
+                    <h1 className="text-black w-full truncate text-center">{movie.title}</h1>
                   </div>
                 </div>
               ))

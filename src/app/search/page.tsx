@@ -19,7 +19,12 @@ export default function MovieSearch() {
 
   const router = useRouter();
   const params = useSearchParams();
-  const query = params.get("query"); // fetch the keyword from the URL parameter
+
+  // fetch the keyword from the URL parameter
+  const query = params.get("query");
+  const page = params.get("page") || "1"; 
+
+  const [currentPage, setCurrentPage] = useState(parseInt(page, 10)); 
 
   const [loading, setLoading] = useState(false);
 
@@ -30,8 +35,8 @@ export default function MovieSearch() {
     const searchMovie = async () => {
       setMovies([]);
       setError("");
-      let page = 1;
       const fetchedMovies = [];
+      let page : number = 1;
       while (true) {
         setLoading(true);
         try {
@@ -53,7 +58,7 @@ export default function MovieSearch() {
           if (fetchedMovies.length === 100) {
             break;
           }
-          page++
+          page++;
         }
         catch (error) {
           setError("Error while fetching movies.")
@@ -66,7 +71,11 @@ export default function MovieSearch() {
     searchMovie();
   }, [query]);
 
-  const [currentPage, setCurrentPage] = useState(1); // tracks which page is user on
+  useEffect(() => {
+    // Sync the URL parameter with the state if it changes
+    setCurrentPage(parseInt(page, 10));
+  }, [page]);
+
   const itemsPerPage = 10; // set how many items should be displayed in 1 page
 
   const totalPages = Math.ceil(movies.length / itemsPerPage); // math ceil is to round the number of total pages
@@ -88,6 +97,11 @@ export default function MovieSearch() {
       setCurrentPage(page);
     }
   };
+
+  const updatePage = (newPage : any) => {
+    setCurrentPage(newPage);
+    router.push(`/search?query=${query}&${new URLSearchParams({ page: newPage.toString() }).toString()}`);
+  }
 
   return (
     <div>
@@ -131,11 +145,11 @@ export default function MovieSearch() {
         {
           currentMovies && currentMovies.length > 0 ?
             <div className="text-white flex gap-5 w-10/12 mx-auto">
-              <button onClick={() => handlePageChange(currentPage - 1)}>
+              <button onClick={() => updatePage(currentPage - 1)}>
                 Prev
               </button>
               <span>Page {currentPage} of {totalPages}</span>
-              <button onClick={() => handlePageChange(currentPage + 1)}>
+              <button onClick={() => updatePage(currentPage + 1)}>
                 Next
               </button>
             </div>

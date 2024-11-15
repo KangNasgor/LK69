@@ -34,7 +34,7 @@ export default function Home() {
   const router = useRouter();
 
   const searchMovie = () => {
-    router.push(`/search?query=${encodeURIComponent(search)}`);
+    router.push(`/search?query=${encodeURIComponent(search)}&page=1`);
   }
 
   useEffect(() => {

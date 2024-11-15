@@ -84,7 +84,7 @@ export default function MovieDetail(){
                     :
                     loading ? 
                     <div className='w-10/12 mx-auto'>
-                        <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1>
+                        <h1 className="text-white font-medium text-xl ml-3 mt-10">Loading..</h1>
                     </div>
                     :
                     <p>{error}</p>

@@ -50,7 +50,7 @@ export default function MovieDetail(){
     },[query]);
 
     const handleSearchMovie = () => {
-        router.push(`/search?query=${encodeURIComponent(search)}`);
+        router.push(`/search?query=${encodeURIComponent(search)}&page=1`);
       }
 
     return(

@@ -29,7 +29,7 @@ export default function MovieSearch() {
   const [loading, setLoading] = useState(false);
 
   const handleSearchMovie = () => {
-    router.push(`/search?query=${encodeURIComponent(search)}`);
+    router.push(`/search?query=${encodeURIComponent(search)}&page=1`);
   }
   useEffect(() => {
     const searchMovie = async () => {
@@ -70,12 +70,6 @@ export default function MovieSearch() {
     }
     searchMovie();
   }, [query]);
-
-  useEffect(() => {
-    // Sync the URL parameter with the state if it changes
-    setCurrentPage(parseInt(page, 10));
-  }, [page]);
-
   const itemsPerPage = 10; // set how many items should be displayed in 1 page
 
   const totalPages = Math.ceil(movies.length / itemsPerPage); // math ceil is to round the number of total pages
@@ -86,21 +80,19 @@ export default function MovieSearch() {
     currentPage * itemsPerPage
   );
 
-  const handlePageChange = (page: number) => {
-    if (page === totalPages + 1) {
-      setCurrentPage(1);
+  const updatePage = (newPage : any) => {
+    let updatedPage;
+    if (newPage === totalPages + 1) {
+      updatedPage = 1;
     }
-    else if (page === 0) {
-      setCurrentPage(totalPages);
+    else if (newPage === 0) { 
+      updatedPage = totalPages;
     }
     else {
-      setCurrentPage(page);
+      updatedPage = newPage;
     }
-  };
-
-  const updatePage = (newPage : any) => {
-    setCurrentPage(newPage);
-    router.push(`/search?query=${query}&${new URLSearchParams({ page: newPage.toString() }).toString()}`);
+    setCurrentPage(updatedPage);
+    router.push(`/search?query=${query}&${new URLSearchParams({ page: updatedPage.toString() }).toString()}`);
   }
 
   return (

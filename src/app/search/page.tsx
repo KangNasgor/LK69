@@ -91,13 +91,13 @@ export default function MovieSearch() {
 
   return (
     <div>
-      <div className="w-full bg-yellow-300 flex justify-center items-center py-10 mb-10 gap-10 h-24 mx-auto">
+      <div className="w-full bg-slate-700 flex justify-start items-center pl-5 md:pl-10 md:py-10 mb-10 gap-10 h-24 mx-auto">
         <Link href={"/"}>
-          <h1 className='text-white font-semibold text-xl '>Home</h1>
+          <h1 className="text-white text-xl font-semibold">LK<span className="text-sky-700">6</span><span className="text-sky-600">9</span></h1>
         </Link>
-        <div className="flex gap-4 w-3/12">
-          <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 rounded-md" placeholder="Search for movies" />
-          <button className="w-6/12 bg-blue-500 p-4 rounded-md text-black mx-auto" onClick={handleSearchMovie}>Search</button>
+        <div className="flex md:items-center gap-1 md:gap-4 md:w-3/12">
+          <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 md:py-4 rounded-md" placeholder="Search for movies" />
+          <button className="w-6/12 bg-sky-950 px-2 py-1 md:p-4 rounded-md text-white mx-auto" onClick={handleSearchMovie}>Search</button>
         </div>
       </div>
       <div className='pb-36'>
@@ -107,30 +107,30 @@ export default function MovieSearch() {
               <div key={movie.imdbID} className="w-10/12 mx-auto">
                 <div className="text-black flex gap-2 items-start">
                   {
-                    movie.Poster === "N/A" ? <p>No poster available.</p> : <Image src={movie.Poster} width={120} height={120} alt="poster" className="object-cover cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}/>
+                    movie.Poster === "N/A" ? <p className='text-white'>No poster available.</p> : <Image src={movie.Poster} width={120} height={120} alt="poster" className="object-cover cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}/>
                   }
                   <div className="w-full">
-                    <h1 className="w-full cursor-pointer hover:underline hover:decoration-solid" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}>
+                    <h1 className="w-full text-white cursor-pointer hover:underline hover:decoration-solid" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}>
                       {movie.Title}
                     </h1>
-                    <p className="w-fit">Released in {movie.Year}</p>
+                    <p className="w-fit text-white">Released in {movie.Year}</p>
                   </div>
                 </div>
-                <div className="h-px w-9/12 bg-black my-5 opacity-50"></div>
+                <div className="h-px w-9/12 bg-white my-5 opacity-50"></div>
               </div>
             ))
           )
             :
             loading ?
               <div className='w-10/12 mx-auto'>
-                <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1>
+                <h1 className="text-white font-medium text-xl ml-3 mt-10">Loading..</h1>
               </div>
               :
-              (<p className="text-black">{error}</p>)
+              (<p className="text-white">{error}</p>)
         }
         {
           currentMovies && currentMovies.length > 0 ?
-            <div className="pagination-controls text-black flex gap-5 w-10/12 mx-auto">
+            <div className="text-white flex gap-5 w-10/12 mx-auto">
               <button onClick={() => handlePageChange(currentPage - 1)}>
                 Prev
               </button>

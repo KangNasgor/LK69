@@ -50,13 +50,13 @@ export default function MovieDetail(){
             {
                 movie && movie.length > 0 ?
                 movie.map((mov) => (
-                    <div key={mov.imdbID} className="flex gap-5 justify-center items-center pt-14">
+                    <div key={mov.imdbID} className="flex flex-col md:flex-row gap-5 justify-center items-center pt-14">
                         <div className="w-fit">
                             {
-                                mov.Poster === "N/A" ? <p>Poster isn't available</p> : <Image src={mov.Poster} height={300} width={300} alt="img"/>
+                                mov.Poster === "N/A" ? <p className="text-white">Poster isn't available</p> : <Image src={mov.Poster} height={300} width={300} alt="img"/>
                             }
                         </div>
-                        <div className="w-6/12 py-5 px-4 rounded-md bg-yellow-300">
+                        <div className="md:w-6/12 py-5 px-4 text-white rounded-md bg-slate-700">
                             <h1 className="font-semibold mb-2 text-2xl">{mov.Title}</h1>
                             <p className="text-md mb-5">Released in : {mov.Year}</p>
                             {mov.Plot === "N/A" ? <p className="text-sm">N/A</p> : <p className="text-sm">{mov.Plot}</p>}

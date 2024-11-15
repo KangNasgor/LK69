@@ -138,13 +138,13 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <div className="h-fit">
-        <div className="w-full bg-slate-700 flex justify-start gap-10 items-center pl-10 py-10 mb-10 h-24 mx-auto">
+        <div className="w-full bg-slate-700 flex justify-start gap-10 items-center pl-5 md:pl-10 md:py-10 mb-10 h-24 mx-auto">
           <div>
             <h1 className="text-white text-xl font-semibold">LK<span className="text-sky-700">6</span><span className="text-sky-600">9</span></h1>
           </div>
-          <div className="flex items-center gap-4 w-3/12">
+          <div className="flex md:items-center gap-1 md:gap-4 md:w-3/12">
             <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 h-10 rounded-md" placeholder="Search for movies" />
-            <button className="w-6/12 bg-sky-950 p-4 rounded-md text-white mx-auto" onClick={() => { search ? searchMovie() : ''}}>Search</button>
+            <button className="w-6/12 bg-sky-950 px-2 py-1 md:p-4 rounded-md text-white mx-auto" onClick={() => { search ? searchMovie() : ''}}>Search</button>
           </div>
         </div>
         <div className="pb-36">

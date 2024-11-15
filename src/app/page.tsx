@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Form from "next/form";
 import { useRouter } from "next/navigation";
+import Head from "next/head";
 
 export default function Home() {
   interface UpcomingMovies {
@@ -12,11 +13,19 @@ export default function Home() {
     poster: string,
 
   };
+  interface Movie {
+    imdbID: string;
+    Title: string;
+    Year: string;
+    Poster: string;
+    Plot: string;
+  }
 
   const [latestMovie, setLatestMovie] = useState<UpcomingMovies[]>([]);
   const [latestActionMovie, setLatestActionMovie] = useState<UpcomingMovies[]>([]);
   const [latestDramaMovie, setLatestDramaMovie] = useState<UpcomingMovies[]>([]);
   const [latestHorrorMovie, setLatestHorrorMovie] = useState<UpcomingMovies[]>([]);
+  const [latest2024movie, setLatest2024movie] = useState<Movie[]>([]);
 
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
@@ -25,7 +34,7 @@ export default function Home() {
   const router = useRouter();
 
   const searchMovie = () => {
-    router.push(`/search?query=${encodeURIComponent(search)}`); 
+    router.push(`/search?query=${encodeURIComponent(search)}`);
   }
 
   useEffect(() => {
@@ -50,7 +59,7 @@ export default function Home() {
       catch (error) {
         setError("Error while fetching movies.");
       }
-      finally{
+      finally {
         setLoading(false);
       }
     }
@@ -124,82 +133,102 @@ export default function Home() {
 
   }, []);
   return (
-    <div className="h-fit">
-      <div className="w-full bg-yellow-300 flex flex-col justify-center items-center py-10 h-24 mx-auto">
-        <div className="flex gap-4 w-3/12">
-          <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 rounded-md" placeholder="Search for movies"/>
-          <button className="w-6/12 bg-blue-500 p-4 rounded-md text-black mx-auto" onClick={searchMovie}>Search</button>
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
+      <div className="h-fit">
+        <div className="w-full bg-slate-700 flex justify-start gap-10 items-center pl-10 py-10 mb-10 h-24 mx-auto">
+          <div>
+            <h1 className="text-white text-xl font-semibold">LK<span className="text-sky-700">6</span><span className="text-sky-600">9</span></h1>
+          </div>
+          <div className="flex items-center gap-4 w-3/12">
+            <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 h-10 rounded-md" placeholder="Search for movies" />
+            <button className="w-6/12 bg-sky-950 p-4 rounded-md text-white mx-auto" onClick={() => { search ? searchMovie() : ''}}>Search</button>
+          </div>
+        </div>
+        <div className="pb-36">
+          <div className="bg-slate-700 pt-5 mb-10">
+            <h1 className="bg-sky-950 w-fit px-2 py-1 rounded-md text-white font-medium text-md ml-3 mb-1">Upcoming movies</h1>
+            <div className="h-px w-3/12 bg-white mt-3 ml-3"></div>
+            <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-4 py-5">
+              {
+                latestMovie && latestMovie.length > 0 && loading === false ?
+                  latestMovie.map((movie: UpcomingMovies) => (
+                    <div key={movie.id} className="min-w-32 flex flex-col">
+                      <div className="">
+                        {movie.poster ? (<Image src={movie.poster} width={500} height={500} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }} />) : (<p>No poster available</p>)}
+                      </div>
+                      <div className="w-full">
+                        <h1 className="text-white w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
+                      </div>
+                    </div>
+                  ))
+                  :
+                  loading ? <h1 className="text-white font-medium text-xl ml-3 mt-10">Loading..</h1> :
+                    <p className="text-white">{error}</p>
+              }
+            </div>
+          </div>
+          <div className="bg-slate-700 pt-5 mb-10">
+            <h1 className="bg-sky-950 w-fit px-2 py-1 rounded-md text-white font-medium text-md ml-3 mb-1">Upcoming Action movies</h1>
+            <div className="h-px w-3/12 bg-white mt-3 ml-3"></div>
+            <div className="flex gap-5 overflow-x-auto whitespace-nowrap py-5 px-5">
+              {
+                latestActionMovie && latestActionMovie.length > 0 && loading === false ?
+                  latestActionMovie.map((movie: UpcomingMovies) => (
+                    <div key={movie.id} className="min-w-32 flex flex-col">
+                      {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }} /> : <p>Poster isn't available</p>}
+                      <div className="w-full">
+                        <h1 className="text-white w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
+                      </div>
+                    </div>
+                  ))
+                  : loading ? <h1 className="text-white font-medium text-xl ml-3 mt-10">Loading..</h1> :
+                    <p className="text-white font-medium">{error}</p>
+              }
+            </div>
+          </div>
+          <div className="bg-slate-700 pt-5 mb-10">
+            <h1 className="bg-sky-950 w-fit px-2 py-1 rounded-md text-white font-medium text-md ml-3 mb-1">Upcoming Drama movies</h1>
+            <div className="h-px w-3/12 bg-white mt-3 ml-3"></div>
+            <div className="flex gap-5 overflow-x-auto whitespace-nowrap py-5 px-5">
+              {
+                latestDramaMovie && latestDramaMovie.length > 0 && loading === false ?
+                  latestDramaMovie.map((movie: UpcomingMovies) => (
+                    <div key={movie.id} className="min-w-32 flex flex-col">
+                      {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }} /> : <p>Poster isn't available</p>}
+                      <div className="w-full">
+                        <h1 className="text-white w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
+                      </div>
+                    </div>
+                  ))
+                  : loading ? <h1 className="text-white font-medium text-xl ml-3 mt-10">Loading..</h1> :
+                    <p className="text-white font-medium">{error}</p>
+              }
+            </div>
+          </div>
+          <div className="bg-slate-700 pt-5 mb-10">
+            <h1 className="bg-sky-950 w-fit px-2 py-1 rounded-md text-white font-medium text-md ml-3 mb-1">Upcoming Horror movies</h1>
+            <div className="h-px w-3/12 bg-white mt-3 ml-3"></div>
+            <div className="flex gap-5 overflow-x-auto whitespace-nowrap py-5 px-5">
+              {
+                latestHorrorMovie && latestHorrorMovie.length > 0 && loading === false ?
+                  latestHorrorMovie.map((movie: UpcomingMovies) => (
+                    <div key={movie.id} className="min-w-32 flex flex-col">
+                      {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }} /> : <p>Poster isn't available</p>}
+                      <div className="w-full">
+                        <h1 className="text-white w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
+                      </div>
+                    </div>
+                  ))
+                  : loading ? <h1 className="text-white font-medium text-xl ml-3 mt-10">Loading..</h1> :
+                    <p className="text-white font-medium">{error}</p>
+              }
+            </div>
+          </div>
         </div>
       </div>
-      <div className="pb-36">
-        <h1 className="text-black font-medium text-xl ml-3 mt-10">Upcoming movies :</h1>
-        <div className="flex gap-5 overflow-x-auto whitespace-nowrap px-5 bg-yellow-300 py-5">
-          { 
-            latestMovie && latestMovie.length > 0 && loading === false ?
-              latestMovie.map((movie: UpcomingMovies) => (
-                <div key={movie.id} className="min-w-32 flex flex-col">
-                  <div className="">
-                    {movie.poster ? (<Image src={movie.poster} width={500} height={500} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }} />) : (<p>No poster available</p>)}
-                  </div>
-                  <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
-                  </div>
-                </div>
-              ))
-              :
-              loading ? <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1> :
-              <p className="text-black">{error}</p>
-          }
-        </div>
-        <h1 className="text-black font-medium text-xl ml-3 mt-10">Upcoming Action movies :</h1>
-        <div className="flex gap-5 overflow-x-auto whitespace-nowrap bg-yellow-300 py-5 px-5">
-          {
-            latestActionMovie && latestActionMovie.length > 0 && loading === false ?
-              latestActionMovie.map((movie : UpcomingMovies) => (
-                <div key={movie.id} className="min-w-32 flex flex-col">
-                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/> : <p>Poster isn't available</p>}
-                  <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
-                  </div>
-                </div>
-              ))
-            : loading ? <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1> :
-            <p className="text-black font-medium">{error}</p>
-          }
-        </div>
-        <h1 className="text-black font-medium text-xl ml-3 mt-10">Upcoming Drama movies :</h1>
-        <div className="flex gap-5 overflow-x-auto whitespace-nowrap bg-yellow-300 py-5 px-5">
-          {
-            latestDramaMovie && latestDramaMovie.length > 0 && loading === false ?
-              latestDramaMovie.map((movie : UpcomingMovies) => (
-                <div key={movie.id} className="min-w-32 flex flex-col">
-                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/> : <p>Poster isn't available</p>}
-                  <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
-                  </div>
-                </div>
-              ))
-            : loading ? <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1> :
-            <p className="text-black font-medium">{error}</p>
-          }
-        </div>
-        <h1 className="text-black font-medium text-xl ml-3 mt-10">Upcoming Horror movies :</h1>
-        <div className="flex gap-5 overflow-x-auto whitespace-nowrap bg-yellow-300 py-5 px-5">
-          {
-            latestHorrorMovie && latestHorrorMovie.length > 0 && loading === false ?
-              latestHorrorMovie.map((movie : UpcomingMovies) => (
-                <div key={movie.id} className="min-w-32 flex flex-col">
-                  {movie.poster ? <Image src={movie.poster} width={300} height={300} alt="img" className="object-cover w-36 h-40 cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/> : <p>Poster isn't available</p>}
-                  <div className="w-full">
-                    <h1 className="text-black w-full truncate text-center hover:underline cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>{movie.title}</h1>
-                  </div>
-                </div>
-              ))
-            : loading ? <h1 className="text-black font-medium text-xl ml-3 mt-10">Loading..</h1> :
-            <p className="text-black font-medium">{error}</p>
-          }
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

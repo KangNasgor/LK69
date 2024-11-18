@@ -6,11 +6,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface Movie {
-    imdbID: string;
-    Title: string;
-    Year: string;
-    Poster: string;
-    Plot: string;
+    id: string;
+    title: string;
+    release_date: string;
+    poster_path: string;
+    overview: string;
   }
 export default function MovieDetail(){
     const params = useSearchParams();
@@ -27,7 +27,7 @@ export default function MovieDetail(){
         const fetchMovieDetail = async () =>{
             try{
                 setLoading(true);
-                const response = await fetch(`https://www.omdbapi.com/?i=${query}&plot=full&apikey=56419db&`);
+                const response = await fetch(`https://api.themoviedb.org/3/movie/${query}?api_key=43b032927de963bba17b5cee20299443`);
                 const data = await response.json();
                 if(data.Response === "Too many results."){
                     setError("Too many results.");
@@ -68,16 +68,16 @@ export default function MovieDetail(){
                 {
                     movie && movie.length > 0 ?
                     movie.map((mov) => (
-                        <div key={mov.imdbID} className="flex flex-col md:flex-row gap-5 justify-center items-center pt-14">
+                        <div key={mov.id} className="flex flex-col md:flex-row gap-5 justify-center items-center pt-14">
                             <div className="w-fit">
                                 {
-                                    mov.Poster === "N/A" ? <p className="text-white">Poster isn't available</p> : <Image src={mov.Poster} height={300} width={300} alt="img"/>
+                                    mov.poster_path === null ? <p className="text-white">Poster isn't available</p> : <Image src={'https://image.tmdb.org/t/p/w1280' + mov.poster_path} height={300} width={300} alt="img"/>
                                 }
                             </div>
                             <div className="md:w-6/12 py-5 px-4 text-white rounded-md bg-slate-700">
-                                <h1 className="font-semibold mb-2 text-2xl">{mov.Title}</h1>
-                                <p className="text-md mb-5">Released in : {mov.Year}</p>
-                                {mov.Plot === "N/A" ? <p className="text-sm">N/A</p> : <p className="text-sm">{mov.Plot}</p>}
+                                <h1 className="font-semibold mb-2 text-2xl">{mov.title}</h1>
+                                {mov.release_date === null ? <p className="text-md mb-5">Upcoming</p> : <p className="text-md mb-5">Released in : {mov.release_date}</p>}
+                                {mov.overview === null ? <p className="text-sm">N/A</p> : <p className="text-sm">{mov.overview}</p>}
                             </div>
                         </div>
                     ))

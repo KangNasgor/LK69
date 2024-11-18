@@ -5,11 +5,12 @@ import Router, { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 interface Movie {
-  imdbID: string;
-  Title: string;
-  Year: string;
-  Poster: string;
-  Plot: string;
+  id: string,
+  title: string,
+  overview: string,
+  poster_path: string,
+  release_date: string,
+  vote_average: string,
 }
 
 export default function MovieSearch() {
@@ -22,11 +23,13 @@ export default function MovieSearch() {
 
   // fetch the keyword from the URL parameter
   const query = params.get("query");
-  const page = params.get("page") || "1"; 
+  const page = params.get("page") || "1"; // get parameter from url
 
   const [currentPage, setCurrentPage] = useState(parseInt(page, 10)); 
 
   const [loading, setLoading] = useState(false);
+
+  const api_key : string = '43b032927de963bba17b5cee20299443';
 
   const handleSearchMovie = () => {
     router.push(`/search?query=${encodeURIComponent(search)}&page=1`);
@@ -35,38 +38,23 @@ export default function MovieSearch() {
     const searchMovie = async () => {
       setMovies([]);
       setError("");
-      const fetchedMovies = [];
       let page : number = 1;
-      while (true) {
-        setLoading(true);
-        try {
-          const response = await fetch(`https://www.omdbapi.com/?s=${query}&page=${page}&apikey=56419db&`); // fetch movies data
-          const data = await response.json(); // assign movies data
-
-          if (data.Error === "Too many results.") { // If too many results fetched
-            setError("Too many results.");
-            break;
-          }
-          else if (data.Result === "Movie not found!") { // If movie's not found
-            setError("Movie not found.");
-            break;
-          }
-          fetchedMovies.push(...data.Search); // Inserting all movies data
-          if (data.Search.length < 10) { // If movies data is below 10, then stop the search
-            break;
-          }
-          if (fetchedMovies.length === 100) {
-            break;
-          }
-          page++;
-        }
-        catch (error) {
-          setError("Error while fetching movies.")
-          break;
-        }
+      setLoading(true);
+      try {
+        const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=Transformers&api_key=43b032927de963bba17b5cee20299443`); // fetch movies data
+        const data = await response.json(); // assign movies data
+        const extractedMovies = data.results.map((movie: Movie) => ({
+          id: movie.id || null,
+          title: movie.title || null,
+          release_date : movie.release_date || null,
+          poster_path : movie.poster_path || null,
+        }));
+        setMovies(extractedMovies);
+      }
+      catch(error){
+        setError("Error");
       }
       setLoading(false);
-      setMovies(fetchedMovies);
     }
     searchMovie();
   }, [query]);
@@ -81,7 +69,7 @@ export default function MovieSearch() {
   );
 
   const updatePage = (newPage : any) => {
-    let updatedPage;
+    let updatedPage; // to keep track of the page
     if (newPage === totalPages + 1) {
       updatedPage = 1;
     }
@@ -89,10 +77,10 @@ export default function MovieSearch() {
       updatedPage = totalPages;
     }
     else {
-      updatedPage = newPage;
+      updatedPage = newPage; // execute function normally
     }
     setCurrentPage(updatedPage);
-    router.push(`/search?query=${query}&${new URLSearchParams({ page: updatedPage.toString() }).toString()}`);
+    router.push(`/search?query=${query}&${new URLSearchParams({ page: updatedPage.toString() }).toString()}`); // router pushing so that parameter page inside the url also change
   }
 
   return (
@@ -110,16 +98,16 @@ export default function MovieSearch() {
         {
           currentMovies && currentMovies.length > 0 ? (
             currentMovies.map((movie: Movie) => (
-              <div key={movie.imdbID} className="w-10/12 mx-auto">
+              <div key={movie.id} className="w-10/12 mx-auto">
                 <div className="text-black flex gap-2 items-start">
                   {
-                    movie.Poster === "N/A" ? <p className='text-white'>No poster available.</p> : <Image src={movie.Poster} width={120} height={120} alt="poster" className="object-cover cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}/>
+                    movie.poster_path === null ? <p className='text-white'>No poster available.</p> : <Image src={`https://image.tmdb.org/t/p/w1280/${movie.poster_path}`} width={120} height={120} alt="poster" className="object-cover cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/>
                   }
                   <div className="w-full">
-                    <h1 className="w-full text-white cursor-pointer hover:underline hover:decoration-solid" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.imdbID)}`) }}>
-                      {movie.Title}
+                    <h1 className="w-full text-white cursor-pointer hover:underline hover:decoration-solid" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>
+                      {movie.title}
                     </h1>
-                    <p className="w-fit text-white">Released in {movie.Year}</p>
+                    {movie.release_date === null ? <p className="text-white text-md mb-5">Upcoming</p> : <p className="text-white text-md mb-5">Released in : {movie.release_date}</p>}
                   </div>
                 </div>
                 <div className="h-px w-9/12 bg-white my-5 opacity-50"></div>

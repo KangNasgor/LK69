@@ -4,14 +4,19 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface Movie {
-    id: string;
-    title: string;
-    release_date: string;
-    poster_path: string;
-    overview: string;
-  }
+
+    interface Movie {
+        id: string,
+        title: string,
+        release_date: string,
+        poster_path: string,
+        overview: string,
+        vote_average: number,
+        production_countries: any,
+    }
 export default function MovieDetail(){
     const params = useSearchParams();
     const query = params.get("query");
@@ -76,7 +81,15 @@ export default function MovieDetail(){
                             </div>
                             <div className="md:w-6/12 py-5 px-4 text-white rounded-md bg-slate-700">
                                 <h1 className="font-semibold mb-2 text-2xl">{mov.title}</h1>
-                                {mov.release_date === null ? <p className="text-md mb-5">Upcoming</p> : <p className="text-md mb-5">Released in : {mov.release_date}</p>}
+                                {mov.release_date === null ? <p className="text-md mb-2">Upcoming</p> : <p className="text-md mb-2">Released in : {mov.release_date}</p>}
+                                {mov.vote_average === null ? <p className="text-md mb-5">N/A</p>
+                                : 
+                                <div className="flex gap-2 items-center mb-2">
+                                    <FontAwesomeIcon icon={faStar} className="text-yellow-300"/>
+                                    <p className="text-md h-fit">Rating : {mov.vote_average.toString().slice(0,3)}</p>
+                                </div>
+                                }
+                                <p className="text-md mb-5">Produced in : {mov.production_countries[0].name}</p>
                                 {mov.overview === null ? <p className="text-sm">N/A</p> : <p className="text-sm">{mov.overview}</p>}
                             </div>
                         </div>

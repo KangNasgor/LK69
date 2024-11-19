@@ -41,7 +41,7 @@ export default function MovieSearch() {
       let page : number = 1;
       setLoading(true);
       try {
-        const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=Transformers&api_key=43b032927de963bba17b5cee20299443`); // fetch movies data
+        const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${query}&api_key=43b032927de963bba17b5cee20299443`); // fetch movies data
         const data = await response.json(); // assign movies data
         const extractedMovies = data.results.map((movie: Movie) => ({
           id: movie.id || null,
@@ -54,7 +54,7 @@ export default function MovieSearch() {
       catch(error){
         setError("Error");
       }
-      setLoading(false);
+      setLoading(false);  
     }
     searchMovie();
   }, [query]);

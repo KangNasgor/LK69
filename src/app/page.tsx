@@ -149,7 +149,7 @@ export default function Home() {
             <h1 className="text-white text-xl font-semibold">LK<span className="text-sky-700">6</span><span className="text-sky-600">9</span></h1>
           </div>
           <div className="flex w-full md:items-center gap-1 md:gap-4 md:w-3/12">
-            <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black w-9/12 md:px-3 h-10 rounded-md" placeholder="Search for movies" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black w-9/12 md:w-full md:px-3 h-10 rounded-md" placeholder="Search for movies" />
             <button className="w-6/12 bg-sky-950 px-2 py-1 md:p-4 rounded-md text-white mx-auto" onClick={() => { search ? searchMovie() : '' }}>Search</button>
           </div>
         </div>

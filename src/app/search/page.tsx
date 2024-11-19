@@ -1,8 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Router, { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react'
 
 interface Movie {
   id: string,
@@ -13,7 +14,7 @@ interface Movie {
   vote_average: string,
 }
 
-export default function MovieSearch() {
+function MovieSearchPage() {
   const [error, setError] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
@@ -25,11 +26,11 @@ export default function MovieSearch() {
   const query = params.get("query");
   const page = params.get("page") || "1"; // get parameter from url
 
-  const [currentPage, setCurrentPage] = useState(parseInt(page, 10)); 
+  const [currentPage, setCurrentPage] = useState(parseInt(page, 10));
 
   const [loading, setLoading] = useState(false);
 
-  const api_key : string = '43b032927de963bba17b5cee20299443';
+  const api_key: string = '43b032927de963bba17b5cee20299443';
 
   const handleSearchMovie = () => {
     router.push(`/search?query=${encodeURIComponent(search)}&page=1`);
@@ -38,7 +39,6 @@ export default function MovieSearch() {
     const searchMovie = async () => {
       setMovies([]);
       setError("");
-      let page : number = 1;
       setLoading(true);
       try {
         const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${query}&api_key=43b032927de963bba17b5cee20299443`); // fetch movies data
@@ -46,15 +46,15 @@ export default function MovieSearch() {
         const extractedMovies = data.results.map((movie: Movie) => ({
           id: movie.id || null,
           title: movie.title || null,
-          release_date : movie.release_date || null,
-          poster_path : movie.poster_path || null,
+          release_date: movie.release_date || null,
+          poster_path: movie.poster_path || null,
         }));
         setMovies(extractedMovies);
       }
-      catch(error){
+      catch (error) {
         setError("Error");
       }
-      setLoading(false);  
+      setLoading(false);
     }
     searchMovie();
   }, [query]);
@@ -68,12 +68,12 @@ export default function MovieSearch() {
     currentPage * itemsPerPage
   );
 
-  const updatePage = (newPage : any) => {
+  const updatePage = (newPage: any) => {
     let updatedPage; // to keep track of the page
     if (newPage === totalPages + 1) {
       updatedPage = 1;
     }
-    else if (newPage === 0) { 
+    else if (newPage === 0) {
       updatedPage = totalPages;
     }
     else {
@@ -82,26 +82,16 @@ export default function MovieSearch() {
     setCurrentPage(updatedPage);
     router.push(`/search?query=${query}&${new URLSearchParams({ page: updatedPage.toString() }).toString()}`); // router pushing so that parameter page inside the url also change
   }
-
-  return (
-    <div>
-      <div className="w-full bg-slate-700 flex justify-start items-center pl-5 md:pl-10 md:py-10 mb-10 gap-10 h-24 mx-auto">
-        <Link href={"/"}>
-          <h1 className="text-white text-xl font-semibold">LK<span className="text-sky-700">6</span><span className="text-sky-600">9</span></h1>
-        </Link>
-        <div className="flex md:items-center gap-1 md:gap-4 md:w-3/12">
-          <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 md:py-4 rounded-md" placeholder="Search for movies" />
-          <button className="w-6/12 bg-sky-950 px-2 py-1 md:p-4 rounded-md text-white mx-auto" onClick={handleSearchMovie}>Search</button>
-        </div>
-      </div>
-      <div className='pb-36'>
+  function Movie() {
+    return (
+      <>
         {
           currentMovies && currentMovies.length > 0 ? (
             currentMovies.map((movie: Movie) => (
               <div key={movie.id} className="w-10/12 mx-auto">
                 <div className="text-black flex gap-2 items-start">
                   {
-                    movie.poster_path === null ? <p className='text-white'>No poster available.</p> : <Image src={`https://image.tmdb.org/t/p/w1280/${movie.poster_path}`} width={120} height={120} alt="poster" className="object-cover cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}/>
+                    movie.poster_path === null ? <p className='text-white'>No poster available.</p> : <Image src={`https://image.tmdb.org/t/p/w1280/${movie.poster_path}`} width={120} height={120} alt="poster" className="object-cover cursor-pointer" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }} />
                   }
                   <div className="w-full">
                     <h1 className="w-full text-white cursor-pointer hover:underline hover:decoration-solid" onClick={() => { router.push(`/movie?query=${encodeURIComponent(movie.id)}`) }}>
@@ -136,7 +126,31 @@ export default function MovieSearch() {
             :
             null
         }
+      </>
+    );
+  }
+  return (
+    <>
+      <div className="w-full bg-slate-700 flex justify-start items-center pl-5 md:pl-10 md:py-10 mb-10 gap-10 h-24 mx-auto">
+        <Link href={"/"}>
+          <h1 className="text-white text-xl font-semibold">LK<span className="text-sky-700">6</span><span className="text-sky-600">9</span></h1>
+        </Link>
+        <div className="flex md:items-center gap-1 md:gap-4 md:w-3/12">
+          <input value={search} onChange={(e) => setSearch(e.target.value)} className="text-black px-3 md:py-4 rounded-md" placeholder="Search for movies" />
+          <button className="w-6/12 bg-sky-950 px-2 py-1 md:p-4 rounded-md text-white mx-auto" onClick={handleSearchMovie}>Search</button>
+        </div>
       </div>
-    </div >
+      <div className='pb-36'>
+        <Movie/>
+      </div>
+    </>
+  );
+}
+
+export default function MovieSearch(){
+  return(
+    <Suspense fallback={<p className="text-white">Loading...</p>}>
+      <MovieSearchPage/>
+    </Suspense>
   );
 }
